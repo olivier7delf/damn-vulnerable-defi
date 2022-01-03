@@ -133,3 +133,23 @@ Small fixes:
 ### 9 Puppet-v2
 
 Solution: Quite similar but we need to swap token and ether before
+
+### 10 Free-rider
+
+A new marketplace of Damn Valuable NFTs has been released! There's been an initial mint of 6 NFTs, which are available for sale in the marketplace. Each one at 15 ETH.
+
+A buyer has shared with you a secret alpha: the marketplace is vulnerable and all tokens can be taken. Yet the buyer doesn't know how to do it. So it's offering a payout of 45 ETH for whoever is willing to take the NFTs out and send them their way.
+
+Solution:
+
+The marketplace has a big issue, it uses the token of the smart contract instead of these of the buyer.
+
+Even if you buy 1 or 6 NTFs, the function _buyOne check only if you have send more that 15 ETH (price for one token) and then use token from the contract.
+
+You can buy every token with 15ETH, which are kept buy the buyer. 
+
+So, we need to:
+- Do a flash loan through IUniswapV2Pair of 15 ETH
+- Buy the token for free
+- Pay back the flash loan, with the interest
+- Transfer the NTFs and we get paid (receive function)
