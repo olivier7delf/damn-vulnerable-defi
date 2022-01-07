@@ -6,10 +6,14 @@ Featuring flash loans, price oracles, governance, NFTs, lending pools, smart con
 
 Created by [@tinchoabbate](https://twitter.com/tinchoabbate)
 Visit [damnvulnerabledefi.xyz](https://damnvulnerabledefi.xyz)
+<br/><br/>
 
 ## My solutions
 
 Code's solution are in ./test/... and if needed, in ./contracts/attacker-contracts/...
+
+(My others Blockchain projects: https://github.com/olivier7delf/Blockchain-content-table)
+<br/><br/>
 
 ### 1 Unstoppable 
 
@@ -28,6 +32,7 @@ using transfer() instead of depositTokens()
 then, when calling function flashloan:
 
 > assert(poolBalance == balanceBefore); // is now False
+<br/><br/>
 
 ### 2 Naive receiver
 
@@ -41,6 +46,7 @@ Solution:
 
 Anyone call call the flashloan function, and then, choose the naive receiver...
 Fix: 
+<br/><br/>
 
 ### 3 Truster
 
@@ -57,6 +63,7 @@ The flashloan function calls an external function we can code.
 This function will approve our smart contract address to transfer token token.
 
 Then our smart contract transfer token from the pool to attacker's address
+<br/><br/>
 
 ### 4 Side Entrance
 
@@ -66,6 +73,7 @@ Solution:
 The function flashloan do a flashloan that do a deposit of all the tokens (pool) to the attackercontract.
 
 Then, the attacker contract sends all these tokens to the attacker.
+<br/><br/>
 
 ### 5 The Rewarder
 
@@ -85,6 +93,7 @@ Create a contract that calls the function flashLoan:
 - then transfer token from rewardToken to the attacker
 
 (take care to have approve transfer from theRewarderPool to flashLoanPool)
+<br/><br/>
 
 ### 6 Selfie
 
@@ -104,6 +113,7 @@ Create a contract that calls the function flashLoan:
   - store the actionId to use it later
   - transfer back the tokens to the pool flashloan
 - "wait" 2 days and then activate executeAction from governance smart contract
+<br/><br/>
 
 ### 8 Puppet
 
@@ -128,11 +138,12 @@ Then, with few ETH (20), you can borrow a lot of Tokens.
 Small fixes: 
 - (still unsafe) a simple solution is to have a lot more token in uniswap, so it become really harder to be in this situation.
 - (safer) Forbid huge variation in short time, i.e: take care about flashloan...
-
+<br/><br/>
 
 ### 9 Puppet-v2
 
 Solution: Quite similar but we need to swap token and ether before
+<br/><br/>
 
 ### 10 Free-rider
 
@@ -153,3 +164,4 @@ So, we need to:
 - Buy the token for free
 - Pay back the flash loan, with the interest
 - Transfer the NTFs and we get paid (receive function)
+<br/><br/>
